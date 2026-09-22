@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+</head>
+<h1>Register Supplier</h1>
+<body>
+    <div id="alert">
+       <p>{{Error_Message}}</p>
+       <button onclick="close_alert()">Ok</button>
+    </div>
+    <form action="/supplier/register">
+         Email: <input type="text" name="email"><br><br>
+         Password: <input type="text" name="password"><br><br>
+         First Name: <input type="text" name="first_name"><br><br>
+         Last Name: <input type="text" name="last_name"><br><br>
+         Adress: <input type="text" name="adress"><br><br>
+         Phone Number <input type="text" name="phone_number"><br><br>
+         <button type="submit">Register</button>
+    </form>
+    <p>Already have account <a href="/supplier/login">Login</a></p>
+</body>
+<script>
+    function close_alert(){
+        alert=document.getElementById("alert").style.display="none"
+    }
+</script>
+</html>

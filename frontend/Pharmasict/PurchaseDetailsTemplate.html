@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Purchase Details</title>
+    <a href="/pharmacist/dashboard">Visit Dashboard</a>
+</head>
+<body>
+    <h1>Purchase Details</h1>
+
+    <h3>Supplier: purchase.receiver</h3>
+    <h3>Sender: purchase.sender</h3>
+    <h3>Date: purchase.date</h3>
+    <h3>All Costs: purchase.cost_price</h3>
+    <h3>Products</h3>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Product Reference</th>
+            <th>Product Price</th>
+            <th>Expiration Date</th>
+        </tr>
+        </thead>
+        <tbody>
+                {% for prod in purchase.products%}
+            <tr>
+                <td>prod.name</td>
+                <td>prod.reference</td>
+                <td>prod.price</td>
+                <td>prod.expiration_date</td>
+            </tr>
+
+
+                 {% endfor %}
+            
+        </tbody>
+    </table>
+
+
+
+    
+</body>
+</html>

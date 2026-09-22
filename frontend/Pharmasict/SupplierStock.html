@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supplier Details</title>
+    <a href="/pharmacist/dashboard">Visit Dashboard</a>
+</head>
+<body>
+    <h1>Supplier Page</h1>
+    <h3>Stock Table</h3>
+    <table>
+        <thead>
+         <tr>
+            <th>Name</th>
+            <th>Reference</th>
+            <th>Price</th>
+            <th>More Operations</th>
+         </tr>
+        </thead>
+        <tbody>
+            {% for stock in stocks%}
+            <tr>
+                <td>{{stock.product_name}} <input type="checkbox" name="products" value="{{prod.id}}" onchange="toggleQuantity(this)"></td>
+                <td>{{stock.cost_price}}</td>
+                <td>{{stock.reference}}</td>
+                <td>{{stock.expiration_date}}</td>
+                <td>{{stock.quantity}}</td>
+                <td><form action="/pharmacist/new_request">send_request</form>
+                Quntity <input type="number"  name="quantiy"><br><br>
+                <button type="submit"> Send Request</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </button>
+        </form>
+    
+    </table>
+</body>
+<footer>
+    Supplier  Informations
+    <ul>
+        <li>Supplier Informations: {{supplier.first_name}}  {{supplier.last_name}} </li>
+        <li>Supplier Adress :  {{supplier.adress}} </li>
+        <li> Supplier Phone number: {{supplier.phone_number}} </li>
+        <li> Supplier Email : {{supplier.email}} </li>
+    </ul>
+</footer>
+
+
+
+
+</html>

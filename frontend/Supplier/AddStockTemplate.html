@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <a href="/supplier/dashboard">Visit Dashboard</a>
+    <a href="/supplier/logout">Logout</a>
+    <title>Add Stock</title>
+</head>
+<body>
+    {% if Error_message %}
+    <div id="alert">
+    
+        <p> Error: {{Error_message}}</p>
+        <button onclick="closealert()">Ok</button>
+         
+    </div>
+    {% endif %}
+    <h1> Add New Product To stock</h1>
+    
+    <form action="/supplier/add_stock" method="post">
+        Product Name: <input type="text" name="product_name"><br><br>
+        Cost Price : <input type="text" name="cost_price"><br><br>
+        Reference: <input type="text" name="reference"><br><br>
+        Quantity: <input type="number" name="quantity"><br><br>
+        Expiration Date: <input type="text" name="expiration_date"><br><br>
+        <button type="submit">Add To Stock</button>
+    </form>
+
+
+    <script>
+        function closealert(){
+            document.getElementById("alert").style.display="none"
+        }
+    </script>
+
+    
+</body>
+</html>

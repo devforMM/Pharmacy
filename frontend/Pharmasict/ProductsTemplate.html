@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+</head>
+<body>
+    
+    <div id="alert">
+        <p id="message"></p>
+        <button onclick="close_alert()">Ok</button>
+    </div>
+
+
+    <h1>Products</h1> 
+    <table>
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Product Cost price</th>
+                <th>Product Reference</th>
+                <th>Product Quantity</th>
+                <th>Product Expiration Date</th>
+                <th>Product Selling Price</th>
+                <th>More</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for prodcut in produts%}
+            <tr id="product_{{product.id}}">
+                <td>{{prodcut.name}}</td>
+                <td>{{prodcut.cost_price}}</td>
+                <td>{{prodcut.reference}}</td>
+                <td>{{prodcut.quantity}}</td>
+                <td>{{prodcut.expiration_date}}</td>
+                
+                <td>
+                    { % if not porduct.selling_price % }
+                    <form action="/pharmacist/define_price" method="post">
+                        <input type="number" name="selling_price">
+                        <button type="submit">Submit</button>
+                    </form>                    
+                    {%  else  %}
+                    {{prodcut.selling_price}}
+                    {% endif %}
+            
+                </td>
+                <td><button onclick="delete_product(prodcut.id)">Delete Product</button></td>
+            </tr>
+
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+<script>
+    async function delete_product(product_id) {
+
+    try{
+             const reponse= await fetch(
+        "/pharmacist/delete_product?product_id={{product_id}}",
+        {
+            method:"DELETE"
+        }
+        
+      )
+      const message= reponse.json()
+      
+
+      const row=document.getElementById(`product-${productId}`)
+      if (row){
+        row.remove()
+      }
+      show_alert()
+      
+
+    }
+    catch(error){
+        alert(error)
+
+
+    }
+
+        
+    }
+
+    function show_alert(message){
+        document.getElementById("message").innerText=message
+    }
+    function close_alert(message){
+        document.getElementById("message").innerText=""
+        document.getElementById("alert").style.display="none"
+    }
+</script>
+</html>

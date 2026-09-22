@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Orders</title>
+    <a href="/pharmacist/dashboard">Visit Dashboard</a>
+</head>
+<body>
+    <h1>All Sales</h1>
+    
+    <table>
+     <thead>
+        <tr>
+            <th>Client</th>
+            <th>Date</th>
+            <th>Total</th>
+            <th>More Details</th>
+        </tr>
+     </thead>
+     <tbody>
+        
+        {% for sale in sales %}
+
+        <tr>
+            <td>{{sale.client}}</td>
+            <td>{{sale.date}}</td>
+            <td>{{sale.total}}</td>
+            <td><a href="/pharmacist/sale_details?sale_id={{sale.id}}"></a></td>
+        </tr>
+
+        {% endfor %}
+     </tbody>   
+    </table>
+</body>
+</html>

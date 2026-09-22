@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Supplier Stocks </title>
+</head>
+<body>
+    <h1>Supplier Stock</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Cost Price</th>
+                <th>Reference</th>
+                <th>Expiration Date</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {for stock in supplier.stock}
+            <tr>
+                <td>{{stock.product_name}}</td>
+                <td>{{stock.cost_price}}</td>
+                <td>{{stock.refernce}}</td>
+                <td>{{stock.expiration_date}}/td>
+                <td>{{stock.quantity}}</td>
+            </tr>
+            {endfor}
+        </tbody>
+    </table>
+
+    <form action="/supplier/stocks" method="GET" >
+        <button type="submit"> Add New Stock</button>
+    </form>
+    
+</body>
+</html>

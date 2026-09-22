@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>New Message</title>
+</head>
+<body>
+    <div id="alert">
+       {% if message  %}
+       <p> {messsage}</p>
+       <button onclick="close_alert()">Ok</button>
+       {% endif %}
+
+    </div>
+    <h1>Send New Message</h1>
+    <form action="/pharmacist/send_message">
+        Receiver Email: <input type="text" name="pharmacist_email"><br><br>
+        Message Object : <input type="text" name="object"><br><br>
+        Content:  <input type="text" name="content"><br><br>
+        <button type="submit" >Send Message</button>
+    </form>
+<script>
+
+function close_alert(){
+    document.getElementById("alert").style.display="none"
+}
+
+
+
+
+
+</script>
+</body>
+</html>

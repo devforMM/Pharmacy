@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>All Suppliers</title>
+    <a href="/pharmacist/dashboard">Visit Dashboard</a>
+</head>
+<body>
+    <h1>All Suppliers</h1>
+    <table>
+       <thead>
+        <tr>
+            <th>Informations</th>
+            <th>Adress</th>
+            <th>Phone Number</th>
+            <th>Adress</th>
+            <th>Supplier stock</th>
+        </tr>
+       </thead>
+       <tbody>
+        {% for supplier in suppliers %}
+            <tr>
+            <td>supplier.first_name  supplier.last_name</td>
+            <td>supplier.adress</td>
+            <td>supplier.phone_number</td>
+            <td><a href="/pharmacist/supplier_stock?id_supplier={{supplier.id}}">supplier details</a></td>
+            <td></td>
+        </tr>
+        {% enfor %}
+
+
+       </tbody>
+
+    </table>
+</body>
+</html>

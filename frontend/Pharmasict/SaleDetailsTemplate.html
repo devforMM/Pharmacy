@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Sale Details</title>
+    <a href="/pharmacist/dashboard">Visit Dashboard</a>
+</head>
+<body>
+    <h1>Sale Details</h1>
+    <h3>Sale ID: sale.id</h3>
+    <h3>Client Name: sale.client</h3>
+    
+    <h3>Sale Products</h3>
+    <ul>
+        {% for prod in sale.products%}
+        <li>
+            <p>Name: {{prod.name}}</p>
+            <p>Reference: {{prod.reference}}</p>
+            <p>Price: {{prod.selling_price}}</p>    
+            <p>Quantity:  {{prod.quantity}}</p>
+        </li>
+        {% endfor  %}
+    </ul>
+    <h3>Total: sale.selling_price</h3>
+
+
+    
+</body>
+</html>

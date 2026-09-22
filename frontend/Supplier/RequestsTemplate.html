@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requests</title>
+</head>
+
+<body>
+
+    <h1>Stock Requests</h1>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Stock ID</th>
+                <th>Stock Name</th>
+                <th>Quantity</th>
+                <th>Status</th>
+                <th>All Cost</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for request in requests %}
+
+            <tr>
+                <td>{{ request.id }}</td>
+                <td>{{ request.product_name }}</td>
+                <td>{{ request.quantity }}</td>
+                <td>{{ request.status }}</td>
+                <td>{{ request.all_cost }}</td>
+
+                <td>
+                    <button onclick="delete_request(request.id)">
+                        Delete Request
+                    </button>
+                    <button onclick="validate_request( request.id )">
+                        Validate Request
+                    </button>
+                    <button onclick="refuse_request(request.id )">
+                        Refuse Request
+                    </button>
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+
+    <script>
+
+        async function delete_request(request_id) {
+
+            try {
+
+                const response = await fetch(
+                    `/supplier/delete_request?request_id=${request_id}`,
+                    {
+                        method: "DELETE"
+                    }
+                );
+
+                const data = await response.json();
+
+                alert(data.message);
+
+            }
+            catch (error) {
+
+                alert(data.message);
+
+                console.error(error);
+            }
+        }
+
+        async function refuse_request(request_id) {
+            try{
+                const reponse= await fetch(
+                    "/supplier/refuse_request?id_request={{request_id}}",
+                    {
+                        method:"POST"
+                    }
+                    
+                )
+                const data = await reponse.json()
+
+                alert(data.message)
+
+            }catch(error){
+                alert(data.message)
+            }
+             
+        }
+
+
+        async function validate_request(request_id) {
+         try{
+            const reponse =await fetch("/supplier/validate_request?request_id={{request_id}}")
+            
+            const data= response.json()
+            alert(data.message)
+         }catch(error){
+            alert(data.message)
+         }
+        }
+
+    </script>
+
+</body>
+</html>

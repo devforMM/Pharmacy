@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+    <title>Purchase Orders</title>
+    <a href="/pharmacist/dashboard">Visit Dashboard</a>
+</head>
+<body>
+    <h1>All Orders</h1>
+    
+    <table>
+        <thead>
+           <tr>
+            <th>Order Id: </th>
+            <th>Supplier:</th>
+            <th>Pharmacist:</th>
+            <th>More Details</th>
+           </tr> 
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{order.id}}</td>
+                <td>{{order.sender}}</td>
+                <td>{{order.receiver}}</td>
+                <td><a href="/pharmacist/order_details?id_order={{order.id}}"></a></td>
+            </tr>
+            {% endfor %}
+         
+        </tbody>
+    </table>
+    
+</body>
+</html>

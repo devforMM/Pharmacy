@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Details</title>
+</head>
+<body>
+
+    <h1>Stock Details</h1>
+    <h3>Stock ID: {{Stock.id}}</h3>
+    <h3>Stock Name: {{Stock.name}} </h3>
+    <h3>Stock Cost: {{Stock.cost_price}}</h3>
+    <h3>Stock Reference: {{Stock.reference}}</h3>
+    <h3>Stock Quantity: {{Stock.quantity}} </h3>
+    <h3>Expiration Date:  {{Stock.expiration_date}}</h3>
+    <h3>Supplier ID: {{Stock.supplier_id}}  <a href="/pharmacist/supplier_details={{{{Stock.supplier_id}}}}"></a></h3>
+    
+    <h3>Make Supply Request :</h3>
+    <form action="/pharmacist/send_request" method="POST">
+          <input type="number" name="quantity"
+       oninput="quantityChanged(this, {{Stock.cost_price}})">
+            Costs: <p id="Costs"></p>
+         <button type="submit">Send Request</button>
+    </form>
+
+    <script>
+        
+function quantityChanged(input, stock_cost) {
+    document.getElementById("Costs").innerText =
+        input.value * stock_cost;
+}
+    </script>
+
+    
+</body>
+</html>

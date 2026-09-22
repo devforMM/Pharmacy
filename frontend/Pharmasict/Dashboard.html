@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Document</title>
+    <nav>
+        <ul>
+            <li><a href="/pharmacist/logout">logout</a></li>
+            <li><a href="/pharmacist/sales_orders">Sales</a></li>
+            <li><a href="/pharmacist/suppliers">All Suppliers</a></li>
+            <li><a href="/pharmacist/statistics">Store Statistics</a></li>
+            <li><a href="/pharmacist/products">Products</a></li>
+        </ul>
+    </nav>
+</head>
+<body>
+    <h1>welcome {{supplier.first_name}} {{supplier.last_name}}  to you dashboard</h1>
+     
+    <h3>Sales Number: {{num_sales}} </h3>
+    <h3>Purchases Number: {{num_purchases}}</h3>
+    <h3>Prodcuts Number : {{num_products}} </h3>
+    <h3>Messages Number: {{num_messages}} </h3>
+      
+</body>
+
+<footer>
+    <h1>Store Informations</h1>
+    <ul>
+        <li>Email: {{pharmacist.email}}</li>
+        <li>Adress:  {{pharmacist.adress}}</li>
+        <li>Phone Number: {{pharmacist.phone_number}}</li>
+        <li></li>
+  
+    </ul>
+</footer>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<head>
+
+    <title>Supply Request</title>
+</head>
+<body>
+
+<h1>Supply Request Informations</h1>
+<h3>Request ID: {{supply_request.id}}</h3>
+<h3>Date: {{supply_request.date}}</h3>
+<h3>Product Name: {{supply_request.product_name}}</h3>
+<h3>Quantity: {{supply_request.quantity}}</h3>
+<h3>Status: {{supply_request.status}} </h3>
+<h3>Supplier ID: {{supply_request.supplier_id}}  <a href="/pharmacist/suppliers?supplier_id={{supplier_id}}">More Informations</a> </h3>
+<h3>Stock ID: {{supply_request.id}}</h3>
+<h3>Costs: {{supply_request.all_costs}}</h3>
+
+{% if supply_request.status==valid %}
+
+<form action="/pharmacist/complete_requests" method="post">
+    <button type="submit">Complete Request</button>
+
+</form>
+
+
+
+{%  endif %}
+</body>
+</html>

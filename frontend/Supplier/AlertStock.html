@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Alert Stock</title>
+    <a href="/supplier/dashboard">Visit Dashboard</a>
+    <a href="/supplier/stock">Logout</a>
+</head>
+
+<body>
+    <h1>Stocks Expiring Soon:</h1>
+    <table>
+        <thead><tr>
+            <th>Stock ID</th>
+            <th>Stock Price</th>
+            <th>Stock Reference</th>
+            <th>Stock Quantitiy</th>
+            <th>Stock Expiration Date</th>
+            <th>More Details</th>
+        </tr></thead>
+        <tbody>
+            {% for stock in stocks %}
+
+            <tr>
+                <td>{{stock.id}}</td>
+                <td>{{stock.product_name}}</td>
+                <td>{{stock.reference}}</td>
+                <td>{{stock.quantity}}</td>
+                <td>{{stock.expiration_date}}</td>
+            </tr>
+
+            {% endfor %}
+        </tbody>
+    
+    </table>
+    
+
+
+    
+</body>
+</html>
