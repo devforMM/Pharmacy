@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <link rel="stylesheet" href="/static/pharmacist_styles.css">
+</head>
+
+<body>
+
+    <div id="alert" style="display: none;">
+        <p id="message"></p>
+        <button onclick="close_alert()">Ok</button>
+    </div>
+
+    <h1>Products</h1>
+    <form action="/pharmacist/add_sale" method="post">
+    <table>
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Product Cost price</th>
+                <th>Product Reference</th>
+                <th>Product Quantity</th>
+                <th>Product Expiration Date</th>
+                <th>Product Selling Price</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            
+            {% for product in products %}
+            <tr>
+
+                <td>{{ product.name }}</td>
+                <td>{{ product.cost_price }}</td>
+                <td>{{ product.reference }}</td>
+                <td>{{ product.quantity }}</td>
+                <td>{{ product.expiration_date }}</td>
+
+                <td>
+
+                    {% if not product.selling_price %}
+                    <form action="/pharmacist/define_price?id_product={{product.id}}" method="post">
+                        Selling Price<input type="number" name="selling_price">
+                        <button type="submit">
+                            Define Price
+                        </button>
+                    </form>
+                    {% else %}
+                    {{ product.selling_price }}
+                    {% endif %}
+                </td>
+                <td>
+                
+                    Quantity: <input type="number" name="quantities">
+                
+                </td>
+            </tr>
+
+            {% endfor %}     
+
+            
+
+        </tbody>
+    </table>
+
+    Client Informations: <input type="text" name="client_informations"><br><br>
+    <button type="submit"> Add New Sale</button>
+    </form>
+
+   
+
+</body>
+</html>

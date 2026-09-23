@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/pharmacist_styles.css">
+    <nav>
+        <ul>
+            <li><a href="/pharmacist/logout">logout</a></li>
+            <li><a href="/pharmacist/sales">Sales</a></li>
+            <li><a href="/pharmacist/suppliers">All Suppliers</a></li>
+            <li><a href="/pharmacist/daily_statistics">Store Statistics</a></li>
+            <li><a href="/pharmacist/products">Products</a></li>
+            <li><a href="/pharmacist/requests">Supply Requests</a></li>
+            <li><a href="/pharmacist/messages">Messages</a></li>
+        </ul>
+    </nav>
+</head>
+<body>
+    <h1>welcome {{pharmacist.first_name}} {{pharmacist.last_name}}  to you dashboard</h1>
+     
+    <h3>Sales Number: {{num_sales}} </h3>
+    <h3>Purchases Number: {{num_purchases}}</h3>
+    <h3>Prodcuts Number : {{num_products}} </h3>
+    <h3>Messages Number: {{num_messages}} </h3>
+      
+</body>
+
+<footer>
+    <h1>Store Informations</h1>
+    <ul>
+        <li>Email: {{pharmacist.email}}</li>
+        <li>Adress:  {{pharmacist.adress}}</li>
+        <li>Phone Number: {{pharmacist.phone_number}}</li>
+  
+    </ul>
+</footer>
+</html>

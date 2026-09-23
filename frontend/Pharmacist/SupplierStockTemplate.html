@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/static/pharmacist_styles.css">
+    <title>Supplier Details</title>
+    <a href="/pharmacist/dashboard">Visit Dashboard</a>
+</head>
+<body>
+    <h1>Supplier Page</h1>
+    <h3>Stock Table</h3>
+    <table>
+        <thead>
+         <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Reference</th>
+            <th>Expiration Date</th>
+            <th>Quantity</th>
+            <th>More Details</th>
+         </tr>
+        </thead>
+        <tbody>
+            {% for stock in stocks%}
+            <tr>
+                
+                <td>{{stock.product_name}}</td>
+                <td>{{stock.cost_price}}</td>
+                <td>{{stock.reference}}</td>
+                <td>{{stock.expiration_date}}</td>
+                <td>{{stock.quantity}}</td>
+                <td><a href="/pharmacist/stock_details?stock_id={{stock.id}}">Stock Details</a></td>
+                
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </button>
+        </form>
+    
+    </table>
+</body>
+<footer>
+    Supplier  Informations
+    <ul>
+        <li>Supplier Informations: {{supplier.first_name}}  {{supplier.last_name}} </li>
+        <li>Supplier Adress :  {{supplier.adress}} </li>
+        <li> Supplier Phone number: {{supplier.phone_number}} </li>
+        <li> Supplier Email : {{supplier.email}} </li>
+    </ul>
+</footer>
+
+
+
+
+</html>

@@ -4,7 +4,6 @@
     <a href="/supplier/dashboard">Visit Dashboard</a>
     <a href="/supplier/logout">Logout</a>
     <title>Add Stock</title>
-    <link rel="stylesheet" href="/static/supplier_styles.css">
 </head>
 <body>
     {% if Error_message %}
@@ -18,11 +17,11 @@
     <h1> Add New Product To stock</h1>
     
     <form action="/supplier/add_stock" method="post">
-        Product Name: <input type="text" name="name"><br><br>
-        Cost Price : <input type="number" name="cost_price"><br><br>
+        Product Name: <input type="text" name="product_name"><br><br>
+        Cost Price : <input type="text" name="cost_price"><br><br>
         Reference: <input type="text" name="reference"><br><br>
         Quantity: <input type="number" name="quantity"><br><br>
-        Expiration Date: <input type="text" name="date"><br><br>
+        Expiration Date: <input type="text" name="expiration_date"><br><br>
         <button type="submit">Add To Stock</button>
     </form>
 

@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="/static/supplier_styles.css">
+
     <title>Supplier Stocks </title>
 </head>
 <body>
     <h1>Supplier Stock</h1>
-                 <li><a href="/supplier/alert_stock">Alert Stock</a></li>
-             <li><a href="/supplier/low_stock">Low Stock</a></li>
     <table>
         <thead>
             <tr>
@@ -19,19 +17,19 @@
             </tr>
         </thead>
         <tbody>
-            {% for stock in stocks %}
+            {for stock in supplier.stock}
             <tr>
                 <td>{{stock.product_name}}</td>
                 <td>{{stock.cost_price}}</td>
                 <td>{{stock.refernce}}</td>
-                <td>{{stock.expiration_date}}</td>
+                <td>{{stock.expiration_date}}/td>
                 <td>{{stock.quantity}}</td>
             </tr>
-            {%endfor%}
+            {endfor}
         </tbody>
     </table>
 
-    <form action="/supplier/add_stock" method="GET" >
+    <form action="/supplier/stocks" method="GET" >
         <button type="submit"> Add New Stock</button>
     </form>
     

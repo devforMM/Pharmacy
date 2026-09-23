@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Stock Details</title>
+    <link rel="stylesheet" href="/static/pharmacist_styles.css">
+</head>
+        {% if Error_message %}
+        <div id="alert">
+       <p>{{Error_message}}</p>
+       <button onclick="closealert()">Ok</button>
+    </div>
+    {% endif %}
+<body>
+
+    <h1>Stock Details</h1>
+    <h3>Stock ID: {{stock.id}}</h3>
+    <h3>Stock Name: {{stock.product_name}} </h3>
+    <h3>Stock Cost: {{stock.cost_price}}</h3>
+    <h3>Stock Reference: {{stock.reference}}</h3>
+    <h3>Stock Quantity: {{stock.quantity}} </h3>
+    <h3>Expiration Date:  {{stock.expiration_date}}</h3>
+    <h3>Supplier ID: {{stock.supplier_id}}  <a href="/pharmacist/supplier_details={{stock.supplier_id}}"></a></h3>
+    
+    <h3>Make Supply Request :</h3>
+    <form action="/pharmacist/send_request?stock_id={{stock.id}}" method="POST">
+          <input type="number" name="quantity"
+       oninput="quantityChanged(this, {{stock.cost_price}})">
+            Costs: <p id="Costs"></p>
+         <button type="submit">Send Request</button>
+    </form>
+
+    <script>
+        
+function quantityChanged(input, stock_cost) {
+    document.getElementById("Costs").innerText =
+        input.value * stock_cost;
+}
+
+function closealert() {
+       const alert=document.getElementById("alert").style.display="none"
+    }
+
+    </script>
+
+    
+</body>
+</html>

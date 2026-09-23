@@ -3,13 +3,13 @@ from sqlalchemy.orm import Session
 from models.Bridge import get_session
 from fastapi.templating import Jinja2Templates
 from fastapi.requests import Request
-from models.DataBase import Supplier,Sale,Product,Stock,Supplyrequest,Message,Pharmacist
+from models.DataBase import Supplier,Sale,Purchase,Product,Stock,Supplyrequest,Message,Pharmacist
 from server.server_utils import get_current_Pharmacist
 from fastapi.exceptions import HTTPException
 from datetime import datetime
 from server.server_utils import hash_password,verify_password,create_token
 from fastapi.responses import RedirectResponse
-templates=Jinja2Templates(directory="../frontend/Pharmacist")
+templates=Jinja2Templates(directory="../templates/pharmacist")
 
 
 
@@ -46,12 +46,12 @@ def register_template(request:Request):
 
 
 
-@pharmasict_router.post("/register")
+@pharmasict_router.post("/regsiter")
 def register(request:Request,first_name=Form(...),last_name=Form(...),email=Form(...),
             password=Form(...),phone_number=Form(...),adress=Form(...),bd:Session=Depends(get_session)
              ):
     try:
-        new_pharmacist=Pharmacist(
+        new_supplier=Supplier(
             first_name=first_name,
             last_name=last_name,
             email=email,
@@ -59,7 +59,7 @@ def register(request:Request,first_name=Form(...),last_name=Form(...),email=Form
             phone_number=phone_number,
             adress=adress
         )
-        bd.add(new_pharmacist)
+        bd.add(new_supplier)
         bd.commit()
         return RedirectResponse(
             url="/pharmacist/login",
@@ -70,43 +70,28 @@ def register(request:Request,first_name=Form(...),last_name=Form(...),email=Form
         return templates.TemplateResponse(
             name="RegisterTemplate.html",
             request=request,
-            context={"Error_Message":f"Registration Error: {e}"}
+            context={"message":f"Registration Error: {e}"}
         )
 
 
 @pharmasict_router.post("/login")
 def login(request:Request,email=Form(...),password=Form(...),db:Session=Depends(get_session)):
     try:
-        pharmacists=db.query(Pharmacist).all()
-        emails=[ph.email for ph in pharmacists]
-        print(emails)
         pharmacist=db.query(Pharmacist).filter(Pharmacist.email==email).first()
         if pharmacist:
-            print("PHARMACIST:", pharmacist)
-
-            if pharmacist:
-                print("PASSWORD:", verify_password(password, pharmacist.password))
-
-                if verify_password(password, pharmacist.password):
-                    print("LOGIN SUCCESS")
-                    
-                    token = create_token({
-                        "id": pharmacist.id,
-                        "email": pharmacist.email
-                    })
-
-                    response = RedirectResponse(
-                        url="/pharmacist/dashboard",
-                        status_code=303
-                    )
-
-                    response.set_cookie(
-                        "access_token",
-                        token,
-                        httponly=True
-                    )
-
-                    return response
+            if verify_password(password,pharmacist.password):
+                token=create_token({"id":pharmacist.id,"email":pharmacist.email})
+                reponse=RedirectResponse(
+                    url="pharmacist/dashboard",
+                    status_code=303
+                )
+                reponse.set_cookie(
+                    "access_token",
+                    token,
+                    httponly=True,
+                    secure=True
+                )
+                return reponse
             else:
                  return templates.TemplateResponse(
                      request=request,
@@ -126,7 +111,7 @@ def login(request:Request,email=Form(...),password=Form(...),db:Session=Depends(
         return templates.TemplateResponse(
             request=request,
             name="LoginTemplate.html",
-            context={"message":f"Error {e}  while Login"}
+            context={"Error_Message":f"Error {e}  while Login"}
         )
 
 
@@ -134,6 +119,7 @@ def login(request:Request,email=Form(...),password=Form(...),db:Session=Depends(
 def dashboard_template(request:Request,pharmacist=Depends(get_current_Pharmacist)):
     try: 
         num_sales=len(pharmacist.sales)
+        num_purchases=len(pharmacist.purchases)
         num_products=len(pharmacist.products)
         num_messages=len(pharmacist.messages)
         return templates.TemplateResponse(
@@ -142,6 +128,7 @@ def dashboard_template(request:Request,pharmacist=Depends(get_current_Pharmacist
             context={
                 "pharmacist":pharmacist,
                 "num_sales":num_sales,
+                "num_purchases":num_purchases,
                 "num_products":num_products,
                 "num_messages":num_messages
             }
@@ -155,14 +142,14 @@ def dashboard_template(request:Request,pharmacist=Depends(get_current_Pharmacist
 def logout(request:Request,pharmacist=Depends(get_current_Pharmacist)):
     return templates.TemplateResponse(
         request=request,
-        name="LoginTemplate.html"
+        name="Login.html"
     )
 
-@pharmasict_router.get("/daily_statistics")
-def get_stastics(request:Request,pharmacist=Depends(get_current_Pharmacist)):
+@pharmasict_router.get("/Daily_statistics")
+def get_stastics(request:Request,date:str,pharmacist=Depends(get_current_Pharmacist)):
     try:
 
-        Sales=[sale for sale in pharmacist.sales if sale.date==datetime.today().strftime("%d/%m/%Y")]
+        Sales=[sale for sale in pharmacist.sales if sale.date==date]
         revenues=0
         profits=0
         costs=0
@@ -176,7 +163,7 @@ def get_stastics(request:Request,pharmacist=Depends(get_current_Pharmacist)):
 
         return templates.TemplateResponse(
             request=request,
-            name="StatisticTemplate.html",
+            name="Statistic.html",
             context={
                 "sales_number":sales_number,
                 "revenues":revenues,
@@ -186,8 +173,12 @@ def get_stastics(request:Request,pharmacist=Depends(get_current_Pharmacist)):
         )
 
 
+
     except Exception as e:
         raise HTTPException(detail=f"Server Error : {e}",status_code=400)
+
+
+
 
 
 
@@ -278,7 +269,7 @@ def sale_details(request:Request,sale_id:int,pharmacist=Depends(get_current_Phar
         sale=db.query(Sale).filter(Sale.id==sale_id).first()
         return templates.TemplateResponse(
             request=request,
-            name="SaleDetailsTemplate.html",
+            name="SaledDetails.html",
             context={"sale":sale}
         )
     except Exception as e:
@@ -295,7 +286,7 @@ def get_sales(request:Request,pharmacist=Depends(get_current_Pharmacist)):
  
         return templates.TemplateResponse(
             request=request,
-            name="SalesTemplate.html",
+            name="Sales.html",
             context={"sales":pharmacist.sales}
         )
     except Exception as e:
@@ -315,7 +306,7 @@ def store_products(request:Request,pharmacist=Depends(get_current_Pharmacist)):
         products=pharmacist.products
         return templates.TemplateResponse(
            request=request,
-           name="ProductsTemplate.html",
+           name="store_products.html",
            context={
                "products":products
            }
@@ -328,21 +319,18 @@ def store_products(request:Request,pharmacist=Depends(get_current_Pharmacist)):
 
 
 
-@pharmasict_router.get("/alert_products")
+@pharmasict_router.get("/expiring_soon")
 def  expiring_products(request:Request,pharmacist=Depends(get_current_Pharmacist)):
     try:
         alert_products = [
-    stock
-    for stock in pharmacist.products
-    if 0 <= (
-        datetime.strptime(stock.expiration_date, "%d/%m/%Y")
-        - datetime.today()
-    ).days <= 30
+    prod
+    for prod in pharmacist.products
+    if (datetime.today() - datetime.strptime(prod.expiration_date, "%Y-%m-%d")).days <= 30
 ]
 
         return templates.TemplateResponse(
                 request=request,
-                name="AlertProductsTemplate copy.html",
+                name="AlertProducts.html",
                 context={
                     "products":alert_products
                 }
@@ -352,28 +340,6 @@ def  expiring_products(request:Request,pharmacist=Depends(get_current_Pharmacist
 
     except Exception as e:
         raise HTTPException(detail=f"Server Error: {e}",status_code=400)
-
-
-
-@pharmasict_router.get("/low_products")
-def  low_products(request:Request,pharmacist=Depends(get_current_Pharmacist)):
-    try:
-        low_products = [prod for prod in pharmacist.products if product.quantity<10]
-    
-
-        return templates.TemplateResponse(
-                request=request,
-                name="LowProductsTemplate.html",
-                context={
-                    "products":low_products
-                }
-
-            )
-
-
-    except Exception as e:
-        raise HTTPException(detail=f"Server Error: {e}",status_code=400)
-
 
 
 
@@ -402,17 +368,17 @@ def delete_prodcut(request:Request,product_id:int,pharmacist=Depends(get_current
 
 @pharmasict_router.post("/define_price")
 def define_price(request:Request,id_product:int,pharmacist=Depends(get_current_Pharmacist),db:Session=Depends(get_session),
-                 selling_price:float=Form(...)):
+                 Selling_price:float=Form(...)):
 
     try:
         product=db.query(Product).filter(Product.id==id_product).first()
-        product.selling_price=selling_price
-        db.commit()
+        product.selling_price=Selling_price
         db.refresh(product)
+        db.commit()
         products=pharmacist.products
         return templates.TemplateResponse(
            request=request,
-           name="ProductsTemplate.html",
+           name="store_products.html",
            context={
                "products":products
            }
@@ -431,7 +397,7 @@ def define_price(request:Request,id_product:int,pharmacist=Depends(get_current_P
 
 
 
-@pharmasict_router.get("/message_form")
+@pharmasict_router.post("/message_form")
 def message_form(request:Request,pharmacist=Depends(get_current_Pharmacist)):
     try:
         return templates.TemplateResponse(
@@ -446,17 +412,18 @@ def message_form(request:Request,pharmacist=Depends(get_current_Pharmacist)):
 
 
 @pharmasict_router.post("/send_message")
-def send_message(request:Request,supplier_email:str=Form(...),content:str=Form(...),object:str=Form(...),
+def send_message(request:Request,supplier_id:int,content:str=Form(...),object:str=Form(...),
                  pharmacist=Depends(get_current_Pharmacist),db:Session=Depends(get_session)):
 
     try:
-        receiver=db.query(Supplier).filter(Supplier.email==supplier_email).first()
+        receiver=db.query(Supplier).filter(Supplier.id==supplier_id).first()
         if receiver:
+
             new_message=Message(
                 object=object,
                 message_content=content,
-                supplier_id=receiver.id,
-                pharmacist_id=pharmacist.id,
+                supplier_id=supplier_id,
+                pharmacist_id=pharmacist,
             )
             db.add(new_message)
             db.commit()
@@ -484,30 +451,17 @@ def send_message(request:Request,supplier_email:str=Form(...),content:str=Form(.
 
 
 @pharmasict_router.get("/messages")
-def get_messages(request:Request,pharmacist=Depends(get_current_Pharmacist),db:Session=Depends(get_session)):
+def get_messages(request:Request,pharmacist=Depends(get_current_Pharmacist)):
     try:
-
-        emails=[
-            db.query(Supplier).filter(Supplier.id==msg.supplier_id).first().email for msg in pharmacist.messages ]
-
-        results=[
-            {"id":msg.id,
-             "object":msg.object,
-             "content":msg.message_content,
-             "email":email
-             }
-
-             for msg,email in zip(pharmacist.messages,emails)
-        ]
-        
-        
         return templates.TemplateResponse(
             name="MessagesTemplate.html",
             request=request,
             context={
-                "messages":results
+                "messages":pharmacist.messages
             }
         )
+
+
     except Exception as e:
         raise HTTPException(status_code=400,detail=f"Server Error: {e}")
 
@@ -543,13 +497,12 @@ def requests_template(request:Request,pharmacist=Depends(get_current_Pharmacist)
 @pharmasict_router.get("/request_details")
 def request_details(request:Request,request_id:int,db:Session=Depends(get_session),pharmacist=Depends(get_current_Pharmacist)):
     try:
-        supply_request=db.query(Supplyrequest).filter(Supplyrequest.id==request_id).filter().first()
-
+        supply_request=db.query(Supplyrequest).filter(Supplyrequest.id==request).filter()
         return templates.TemplateResponse(
             request=request,
             name="RequestDetailsTemplate.html",
             context={
-                "supply_request":supply_request
+                "request":supply_request
             }
         )
 
@@ -581,7 +534,7 @@ def sotck_details(request:Request,stock_id:int,pharmacist=Depends(get_current_Ph
 
 @pharmasict_router.post("/send_request")
 def send_request(request:Request,stock_id:int,pharmacist=Depends(get_current_Pharmacist),db:Session=Depends(get_session),
-                 quantity:int=Form(...),
+                 quantity=Form(...),
                  ):
     try:
 
@@ -613,8 +566,7 @@ def send_request(request:Request,stock_id:int,pharmacist=Depends(get_current_Pha
             request=request,
             name="StockDetailsTemplate.html",
             context={
-                "Error_message":f"Error:  {e} ",
-                "stock":stock
+                "Error_message":f"Error:  {e} "
             }
 
 
@@ -656,9 +608,7 @@ def complete_request(request:Request,request_id:int,pharmacist=Depends(get_curre
             request=request,
             name="RequestDetailsTemplate.html",
             context={
-
-                "Error_message":f"Error:  {e} ",
-                "supply_request":Supply_request
+                "Error_message":f"Error:  {e} "
             }
         )
 
@@ -669,36 +619,39 @@ def complete_request(request:Request,request_id:int,pharmacist=Depends(get_curre
 
 @pharmasict_router.post("/add_sale")
 def add_sale(request:Request,db:Session=Depends(get_session),pharmacist=Depends(get_current_Pharmacist),
-            client_informations=Form(...),quantities:list[int]=Form(...)):
+            client_informations=Form(...),products_ids:list[int]=Form(...),quantities:list[int]=Form(...)):
     
     try:
        Total_cost=0
        Total_revenue=0
        products_sold=[]
 
-       pharmacist_products=pharmacist.products
+       target_products=[
+           db.query(Product).filter(Product.id==prod_id).first() for prod_id in products_ids
+       ]
 
-       for product,qte in zip(pharmacist_products,quantities):
-            if qte>0:
-                Total_revenue+=product.selling_price*qte
-                Total_cost+=product.cost_price*qte
-                
-                products_sold.append(
-                                {
-                                    "Name":product.name,
-                                    "Reference":product.reference,
-                                    "quantity":qte,
-                                    "Selling_price":product.selling_price,
-                                }
-                            )
-                product.quantity-=qte
+
+       for product,qte in zip(target_products.copy(),quantities):
+         
+            Total_revenue+=product.selling_price*qte
+            Total_cost+=product.cost_price*qte
+            products_sold.append(
+                             {
+                                 "Name":product.name,
+                                 "Reference":product.reference,
+                                 "quantity":qte,
+                                 "Selling_price":product.selling_price,
+                             }
+                         )
+            product.quantity-=qte
        
        Profit=Total_revenue-Total_cost
        new_sale=Sale(
                     date = datetime.today().strftime("%Y-%m-%d",),
                     client=client_informations,
+                    receiver=f"{pharmacist.first_name}-{pharmacist.last_name}",
                     products=products_sold,
-                    pharmacist_id=pharmacist.id,
+                    pharmacist_id=pharmacist,
                     total=Total_revenue,
                     Profit=Profit,
                     Cost=Total_cost,
@@ -710,7 +663,7 @@ def add_sale(request:Request,db:Session=Depends(get_session),pharmacist=Depends(
 
        return templates.TemplateResponse(
             request=request,
-            name="SaleDetailsTemplate.html",
+            name="SaleDetails.html",
             context={"sale":new_sale}
         )
     except Exception as e:
@@ -720,17 +673,3 @@ def add_sale(request:Request,db:Session=Depends(get_session),pharmacist=Depends(
 
 
 
-@pharmasict_router.get("/requests")
-def get_requests(request:Request,pharmacist=Depends(get_current_Pharmacist)):
-    try:
-        return templates.TemplateResponse(
-            request=request,
-            name="RequestsTemplate.html",
-            context={
-                "requests":pharmacist.requests
-            }
-        )
-
-
-    except Exception as e:
-        raise HTTPException(detail=f"Server Error: {e}",status_code=400)

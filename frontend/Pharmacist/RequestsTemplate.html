@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<link rel="stylesheet" href="/static/pharmacist_styles.css">
+    <title>Requests</title>
+</head>
+
+<body>
+
+    <h1>Stock Requests</h1>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Stock ID</th>
+                <th>Stock Name</th>
+                <th>Quantity</th>
+                <th>Status</th>
+                <th>More Details</th>
+                
+
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for request in requests %}
+
+            <tr id="request_{{request.id}}">
+                <td>{{ request.id }}</td>
+                <td>{{ request.product_name }}</td>
+                <td>{{ request.quantity }}</td>
+                <td>{{ request.status }}</td>
+                {%if request.status=="Valid"%}
+                <td><a href="/pharmacist/request_details?request_id={{request.id}}">Request Details</a></td>
+                {% endif %}
+                
+
+
+              
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+
+    <script>
+
+        
+
+    </script>
+
+</body>
+</html>

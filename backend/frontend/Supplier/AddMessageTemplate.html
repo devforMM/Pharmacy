@@ -3,7 +3,6 @@
 <head>
 
     <title>New Message</title>
-    <link rel="stylesheet" href="/static/supplier_styles.css">
 </head>
 <body>
     <div id="alert">
@@ -17,7 +16,7 @@
     <form action="/supplier/send_message">
         Receiver Email: <input type="text" name="pharmacist_email"><br><br>
         Message Object : <input type="text" name="object"><br><br>
-        Content: <textarea name="content" rows="8" cols="50"></textarea><br><br>
+        Content:  <input type="text" name="content"><br><br>
         <button type="submit" >Send Message</button>
     </form>
 <script>

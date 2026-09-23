@@ -8,7 +8,7 @@ from fastapi.templating import Jinja2Templates
 from server.server_utils import *
 supplier_router=APIRouter()
 from fastapi.responses import RedirectResponse
-templates=Jinja2Templates(directory="../frontend/Supplier")
+templates=Jinja2Templates(directory="../frontend/Pharmacist")
 
 
 
@@ -27,7 +27,7 @@ def login_template(request:Request):
     try:
         return templates.TemplateResponse(
             request=request,
-            name="LoginTemplate.html",
+            name="LoginTemaplate.html",
         )
     except Exception as e:
         raise HTTPException(detail=f"Server Error: {e}",status_code=400)
@@ -53,12 +53,11 @@ def register(request:Request,db:Session=Depends(get_session),first_name=Form(...
              ):
     try:
         new_supplier=Supplier(
-            first_name=first_name,last_name=last_name,email=email,
-            password= hash_password(password),phone_number=phone_number,adress=adress
+            first_name,last_name,email,password,phone_number,adress
         )
         db.add(new_supplier)
-        db.commit()
         db.refresh(new_supplier)
+        db.commit()
         return RedirectResponse(
             url="/supplier/login",
             status_code=303
@@ -85,7 +84,7 @@ def login(request:Request,db:Session=Depends(get_session),email=Form(...),passwo
                 )
                 reponse.set_cookie(
                     key="access_token",
-                    value=token,
+                    token,
                     httponly=True,
                     secure=True
                 )
@@ -115,7 +114,7 @@ def login(request:Request,db:Session=Depends(get_session),email=Form(...),passwo
 
 @supplier_router.get("/dashboard")
 def dashboard(request:Request,supplier=Depends(get_current_Supplier)):
-    stock=supplier.stocks
+    stock=supplier.stock
     messages=supplier.messages
     requests=supplier.requests
 
@@ -171,10 +170,10 @@ def add_stock(request:Request,db:Session=Depends(get_session),supplier=Depends(g
             supplier_id=supplier.id
         )
         db.add(new_stock)
-        db.commit()
         db.refresh(new_stock)
+        db.commit()
 
-        stocks=supplier.stocks
+        stocks=supplier.stock
         return templates.TemplateResponse(
             request=request,
             name="StocksTemplate.html",
@@ -198,9 +197,9 @@ def stock(request:Request,supplier=Depends(get_current_Supplier)):
     try:
         return templates.TemplateResponse(
             request=request,
-            name="StocksTemplate.html",
+            name="StockTemplate.html",
             context={
-                "stocks":supplier.stocks
+                "stocks":supplier.stock
             }
 
         )
@@ -210,12 +209,12 @@ def stock(request:Request,supplier=Depends(get_current_Supplier)):
 
 
 
-@supplier_router.get("/low_stock")
+@supplier_router.get("/low_stocks")
 def low_stock(request:Request,supplier=Depends(get_current_Supplier)):
     try:
 
         low_stock=[
-            stock for stock in supplier.stocks if stock.quantity<10
+            stock for stock in supplier.stock if stock.quantity<10
         ]
 
         return templates.TemplateResponse(
@@ -233,23 +232,16 @@ def low_stock(request:Request,supplier=Depends(get_current_Supplier)):
 
 
 
-@supplier_router.get("/alert_stock")
+@supplier_router.get("/alert_products")
 def alert_stock(request:Request,supplier=Depends(get_current_Supplier)):
     try:
-        alert_stocks = [
-    stock
-    for stock in supplier.stocks
-    if 0 <= (
-        datetime.strptime(stock.expiration_date, "%d/%m/%Y")
-        - datetime.today()
-    ).days <= 30
-]
+        alert_products=[stock for stock in supplier.stock if  (datetime.today()-datetime.strptime(stock.expiration_date,"")).days<30]
 
         return templates.TemplateResponse(
             request=request,
-            name="AlertStockTemplate.html",
+            name="AlertProductsTemplate.html",
             context={
-                "stocks":alert_stocks
+                "products":alert_products
             }
         )
 
@@ -263,38 +255,29 @@ def alert_stock(request:Request,supplier=Depends(get_current_Supplier)):
 ############################### Requests ###################################################
 
 @supplier_router.post("/validate_request")
-def validate_request(request:Request,request_id:int,supplier=Depends(get_current_Supplier),db:Session=Depends(get_session)):
+def validate_request(request:Request,supply_id:int,supplier=Depends(get_current_Supplier),db:Session=Depends(get_session)):
     try:
-        supply_request=db.query(Supplyrequest).filter(Supplyrequest.id==request_id).first()
-        supply_request.status="Valid"
+        request=db.query(Supplyrequest).filter(Supplyrequest.id==supply_id).first()
+        request.status="Valid"
         db.commit()
-        return templates.TemplateResponse(
-                            request=request,
-                            name="RequestsTemplate.html",
-                            context={
-                                "requests":supplier.requests
-                            }
-                        )
+        return {
+                "Message":"Request validated successfully"
+            }
     except Exception as e:
         return {
             "Message":f"Error {e} validated the message "
         }
        
 
-@supplier_router.post("/refuse_request")
-def refuse_request(request:Request,request_id:int,bd:Session=Depends(get_session),supplier=Depends(get_current_Supplier)):
+@supplier_router.get("/refuse_request")
+def refuse_request(request:Request,request_id:int,bd:Session=Depends(get_session),supplier=Depends(get_current_Pharmacist)):
     try:
-        supply_request=bd.query(Supplyrequest).filter(Supplyrequest.id==request_id).first()
-        supply_request.status="Refused"
+        request=bd.query(Supplyrequest).filter(Supplyrequest.id==request_id).first()
+        request.status="Refused"
         bd.commit()
-        return templates.TemplateResponse(
-                    request=request,
-                    name="RequestsTemplate.html",
-                    context={
-                        "requests":supplier.requests
-                    }
-                )
-
+        return {
+                "Message":"Request refused successfully"
+            }
     except Exception as e:
         return {
             "Message":f"Error {e} refusing the message "
@@ -303,13 +286,14 @@ def refuse_request(request:Request,request_id:int,bd:Session=Depends(get_session
 
 
 @supplier_router.delete("/delete_request")
-def delete_request(request_id:int,db:Session=Depends(get_session),supplier=Depends(get_current_Supplier)):
+def delete_request(request_id:int,db:Session=Depends(get_current_Supplier)):
     try:
-        supply_request=db.query(Supplyrequest).filter(Supplyrequest.id==request_id).first()
-        db.delete(supply_request)
+        request=db.query(Supplyrequest).filter(Supplyrequest.id==request_id).first()
+        db.delete(request)
         db.commit()
-        return {"Message":"Request Deleted successfully"}
-       
+        return {
+                "Message":"Request deleted successfully"
+            }
     except Exception as e:
         return {
             "Message":f"Error {e} deleting the message "
@@ -323,9 +307,9 @@ def get_requests(request:Request,supplier=Depends(get_current_Supplier)):
     try:
         return templates.TemplateResponse(
             request=request,
-            name="RequestsTemplate.html",
+            name="StockTemplate.html",
             context={
-                "requests":supplier.requests
+                "requests":supplier.supplies
             }
         )
 
@@ -342,7 +326,7 @@ def get_requests(request:Request,supplier=Depends(get_current_Supplier)):
 
 
 
-@supplier_router.get("/message_form")
+@supplier_router.post("/message_form")
 def message_form(request:Request,supplier=Depends(get_current_Supplier)):
     try:
         return templates.TemplateResponse(

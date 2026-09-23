@@ -1,21 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <title>Messages</title>
-    <a href="/supplier/dashboard">Visit Dashboard</a>
-    <a href="/supplier/message_form">Send New Message</a>
-    <link rel="stylesheet" href="/static/supplier_styles.css">
+    <a href="/pharmacist/dashboard">Visit Dashboard</a>
+    <a href="/pharmacist/message_form">Send New Message</a>
+    <link rel="stylesheet" href="/static/pharmacist_styles.css">
 </head>
 <body>
-     <h1>
+    <h1>
         Messages 
     </h1>
     <div id="alert">
      {% if message %}
-        
         {{message}}
-     <button onclick="">Ok</button>
+     <button onclick="closealert(closealert)">Ok</button>
 
      {% endif %}
     </div>
@@ -25,15 +23,15 @@
                 <th>Message ID</th>
                 <th>Message Object</th>
                 <th>Content</th>
-                <th>Sender</th>
+                <th>Receiver</th>
             </tr>
         </thead>
         {% for msg in messages %}
         <tr>
-            <td>IDMSG-{{msg.id}}</td>
+            <td>ID-{{msg.id}}</td>
             <td>{{msg.object}}</td>
             <td>{{msg.content}}</td>
-            <td>{{msg.receiver}}</td>
+            <td>{{msg.email}}</td>
         </tr>
         {% endfor %}
 
@@ -42,13 +40,13 @@
     </table>
 
 
+
 <script>
 
 function closealert(){
     document.getElementById("alert").style.display="none"
 }
 </script>
-
     
 </body>
 </html>

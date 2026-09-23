@@ -2,8 +2,7 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/supplier_styles.css">
     <title>Requests</title>
 </head>
 
@@ -28,7 +27,7 @@
 
             {% for request in requests %}
 
-            <tr>
+            <tr id="row-{{ request.id }}">
                 <td>{{ request.id }}</td>
                 <td>{{ request.product_name }}</td>
                 <td>{{ request.quantity }}</td>
@@ -36,15 +35,25 @@
                 <td>{{ request.all_cost }}</td>
 
                 <td>
-                    <button onclick="delete_request(request.id)">
-                        Delete Request
+
+                    {% if request.status == "Pending" %}
+
+                    <form action="/supplier/validate_request?request_id={{ request.id }}" method="post">
+                        <button type="submit">Validate</button>
+                    </form>
+
+                    <form action="/supplier/refuse_request?request_id={{ request.id }}" method="post">
+                        <button type="submit">Refuse</button>
+                    </form>
+
+                    {% else %}
+
+                    <button onclick="delete_request({{ request.id }})">
+                        Delete
                     </button>
-                    <button onclick="validate_request( request.id )">
-                        Validate Request
-                    </button>
-                    <button onclick="refuse_request(request.id )">
-                        Refuse Request
-                    </button>
+
+                    {% endif %}
+
                 </td>
 
             </tr>
@@ -71,49 +80,22 @@
 
                 const data = await response.json();
 
-                alert(data.message);
+                const row = document.getElementById(`row-${request_id}`);
+
+                row.remove();
+
+                alert(data.Message);
+
+            } catch (error) {
+
+                alert(error);
 
             }
-            catch (error) {
 
-                alert(data.message);
-
-                console.error(error);
-            }
-        }
-
-        async function refuse_request(request_id) {
-            try{
-                const reponse= await fetch(
-                    "/supplier/refuse_request?id_request={{request_id}}",
-                    {
-                        method:"POST"
-                    }
-                    
-                )
-                const data = await reponse.json()
-
-                alert(data.message)
-
-            }catch(error){
-                alert(data.message)
-            }
-             
-        }
-
-
-        async function validate_request(request_id) {
-         try{
-            const reponse =await fetch("/supplier/validate_request?request_id={{request_id}}")
-            
-            const data= response.json()
-            alert(data.message)
-         }catch(error){
-            alert(data.message)
-         }
         }
 
     </script>
 
 </body>
+
 </html>

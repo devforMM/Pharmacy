@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Sale Details</title>
+    <link rel="stylesheet" href="/static/pharmacist_styles.css">
+    <a href="/pharmacist/dashboard">Visit Dashboard</a>
+</head>
+<body>
+    <h1>Sale Details</h1>
+    <h3>Sale ID: {{sale.id}}</h3>
+    <h3>Client Name: {{sale.client}}</h3>
+    
+    <h3>Sale Products</h3>
+    <ul>
+        {% for prod in sale.products%}
+        <li>
+            <p>Name: {{prod.Name}}</p>
+            <p>Reference: {{prod.Reference}}</p>
+            <p>Price: {{prod.Selling_price}}</p>    
+            <p>Quantity:  {{prod.quantity}}</p>
+        </li>
+        {% endfor  %}
+    </ul>
+    <h3>Total: {{sale.total}}</h3>
+
+
+    
+</body>
+</html>

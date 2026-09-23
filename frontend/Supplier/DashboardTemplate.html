@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Dashbpoard</title>
+    <link rel="stylesheet" href="/static/supplier_styles.css">
+</head>
+<body>
+    
+    <nav>
+        <ul>
+            <li><a href="/supplier/logout">Logout</a></li>
+            <li><a href="/supplier/stocks">Stock</a></li>
+             <li><a href="/supplier/requests">Supply Requests</a></li>
+             <li><a href="/supplier/messages">Messages</a></li>
+        </ul>
+    </nav>
+    <h1>Welcome {{supplier.first_name}} {{supplier.last_name}} to your dashboard</h1>
+
+    <h1>Stock</h1>
+    <h2>You have {{stock_length}} Stocks</h2>
+    <h2>You have {{messages_lenght}} Messages </h2>
+    <h1>you have {{requests_length}} requests </h1>
+
+</body>
+</html>

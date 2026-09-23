@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Alert Stock</title>
+    <a href="/pharmacist/dashboard">Visit Dashboard</a>
+    <a href="/pharmacist/products">Logout</a>
+    <link rel="stylesheet" href="/static/pharmacist_styles.css">
+</head>
+
+<body>
+    <h1>Stocks Expiring Soon:</h1>
+    <table>
+        <thead><tr>
+            <th>Product ID</th>
+            <td>Product Name</td>
+            <th>Product Cost Price</th>
+            <th>Product Selling Price</th>
+            <th>Product Reference</th>
+            <th>Product Quantitiy</th>
+            <th>Product Expiration Date</th>
+            <th>More Details</th>
+        </tr></thead>
+        <tbody>
+            {% for stock in stocks %}
+
+            <tr>
+                <td>{{Product.id}}</td>
+                <td>{{Product.name}}</td>
+                <td>{{Product.cost_price}}</td>
+                <td>{{Product.selling_price}}</td>
+                <td>{{stock.quantity}}</td>
+                <td>{{stock.expiration_date}}</td>
+            </tr>
+
+            {% endfor %}
+        </tbody>
+    
+    </table>
+    
+    <script>
+
+        async function delete_product(product_id) {
+
+            try {
+
+                const response = await fetch(
+                    `/pharmacist/delete_product?product_id=${product_id}`,
+                    {
+                        method: "DELETE"
+                    }
+                );
+
+                const message = await response.json();
+
+                const row = document.getElementById(
+                    `product_${product_id}`
+                );
+
+                if (row) {
+                    row.remove();
+                }
+
+                show_alert(message.message);
+
+            } catch (error) {
+
+                show_alert(error.message);
+
+            }
+        }
+
+
+        function show_alert(message) {
+
+            document.getElementById("message").innerText = message;
+
+            document.getElementById("alert").style.display = "block";
+        }
+
+
+        function close_alert() {
+
+            document.getElementById("message").innerText = "";
+
+            document.getElementById("alert").style.display = "none";
+        }
+
+    </script>

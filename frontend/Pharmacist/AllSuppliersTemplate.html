@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>All Suppliers</title>
+    <a href="/pharmacist/dashboard">Visit Dashboard</a>
+    <link rel="stylesheet" href="/static/pharmacist_styles.css">
+</head>
+<body>
+    <h1>All Suppliers</h1>
+    <table>
+       <thead>
+        <tr>
+            <th>Informations</th>
+            <th>Adress</th>
+            <th>Phone Number</th>
+            <th>Supplier stock</th>
+            <td>more details</td>
+        </tr>
+       </thead>
+       <tbody>
+        {% for supplier in suppliers %}
+            <tr>
+            <td>{{supplier.first_name}} {{supplier.last_name}}</td>
+            <td>{{supplier.adress}}</td>
+            <td>{{supplier.phone_number}}</td>
+            <td>{{ supplier.stocks|length }}</td>
+            <td><a href="/pharmacist/supplier_stock?id_supplier={{supplier.id}}">Supplier Stock</a></td>
+        </tr>
+        {% endfor %}
+
+
+       </tbody>
+
+    </table>
+</body>
+</html>
